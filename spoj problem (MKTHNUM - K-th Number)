@@ -1,0 +1,150 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+#define pb push_back
+#define mp make_pair
+#define fe first 
+#define se second 
+#define rep(n) for(int i=0;i<n;i++)
+struct node 
+{
+int val;
+node *left,*right;
+	
+	node(){}
+	node(int i,node* l,node* r)
+	{
+		val=i;
+		left=l;
+		right=r;
+	}
+};
+
+node* v[100006];
+void buildtree(int s,int e,node* pos)
+{
+	if(s==e)
+	{
+		pos->val=0;
+		
+	}
+	else
+	{
+		int mid=(s+e)>>1;
+		 pos->left=new node(0,NULL,NULL);
+		 pos->right=new node(0,NULL,NULL);
+		 buildtree(s,mid,pos->left);
+		 buildtree(mid+1,e,pos->right);
+		 pos->val=(pos->left->val+pos->right->val);
+	}	
+}
+
+void update(int s,int e,node* pos,node* prev,int id)
+{
+	if(s==e)
+	{
+		pos->val=1;
+	}
+	else
+	{
+		int mid=(s+e)>>1;
+		if(id<=mid)
+		{
+			pos->right=prev->right;
+			pos->left=new node(0,NULL,NULL);
+			update(s,mid,pos->left,prev->left,id);
+		}
+		
+		else
+		{
+			pos->left=prev->left;
+			pos->right=new node(0,NULL,NULL);
+			update(mid+1,e,pos->right,prev->right,id);
+		}
+		
+		pos->val=pos->left->val+pos->right->val;
+	
+	}
+}
+void show(int s,int e,node* pos)
+{
+	if(s==e)
+	{
+		cout<<pos->val<<" "<<s<<" "<<e<<endl;
+	}
+
+	else
+	{
+		int mid=(s+e)>>1;
+		 //pos->left=new node(0,NULL,NULL);
+		 //spos->right=new node(0,NULL,NULL);
+		 show(s,mid,pos->left);
+		 show(mid+1,e,pos->right);
+		 cout<<pos->val<<" "<<s<<" "<<e<<endl;
+		 //pos->val=(pos->left->val+pos->right->val);
+	}	
+}
+int query(int s,int e,node* pos,node* prev,int k)
+{
+	if(e==s)
+	{
+		return s;
+	}
+	
+	int mid=(s+e)>>1;
+	int cnt=pos->left->val-prev->left->val;
+	if(cnt>=k)
+	{
+		return query(s,mid,pos->left,prev->left,k);
+	}
+	
+	else
+	{
+		return query(mid+1,e,pos->right,prev->right,k-cnt);
+	}
+}
+int main()
+{
+int n,q;
+cin>>n>>q;
+int a[100005],max=0,b[100005];
+map<int,int> m;
+ v[0]=new node(0,NULL,NULL);
+	buildtree(0,n-1,v[0]);
+	rep(n)
+	{
+		cin>>a[i];
+		m[a[i]];
+	}
+	
+	for(map<int,int>:: iterator it=m.begin();it!=m.end();it++)
+	{
+		m[it->first]=max;
+		b[max]=it->first;
+		max++;
+	}
+	//show(0,n-1,v[0]);
+	rep(n)
+	{
+		v[i+1]=new node(0,NULL,NULL);
+		update(0,n-1,v[i+1],v[i],m[a[i]]);
+		//cout<<m[a[i]]<<endl;
+		//if(i==n-1)
+		//show(0,n-1,v[i+1]);		
+	}
+	
+	 //int ans=query(0,n-1,v[5],v[1-1],4);
+	//	cout<<b[ans]<<endl;
+	//int q;
+	//cin>>q;
+	while(q--)	
+	{
+		int l,r,k;
+		cin>>l>>r>>k;
+		int ans=query(0,n-1,v[r],v[l-1]	,k);
+		cout<<b[ans]<<endl;
+		
+	}
+	
+return 0;	
+}
